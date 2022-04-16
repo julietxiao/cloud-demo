@@ -13,6 +13,8 @@ public interface CutterwearService {
 
     Cutterwear selectByPrimaryKey(Long id);
 
+    List<Cutterwear> query(Cutterwear cutterwearQueryVO);
+
     int updateByPrimaryKeySelective(Cutterwear record);
 
     int updateByPrimaryKey(Cutterwear record);

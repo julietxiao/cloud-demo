@@ -11,53 +11,122 @@
     <result column="wear" jdbcType="INTEGER" property="wear" />
     <result column="wear_type" jdbcType="INTEGER" property="wearType" />
   </resultMap>
-  <sql id="Base_Column_List">
-    id, date, type, position, manufacturer, image_name, wear, wear_type
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
   </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, `date`, `type`, `position`, manufacturer, image_name, wear, wear_type
+  </sql>
+  <select id="selectByExample" parameterType="com.gm.pojo.CutterwearExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from cutterwear
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from cutterwear
     where id = #{id,jdbcType=BIGINT}
-  </select>
-  <select id="selectByDate" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List" />
-    from cutterwear
-    where date = #{date,jdbcType=BIGINT}
-  </select>
-  <select id="selectByImageName" parameterType="java.lang.String" resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List" />
-    from cutterwear
-    where image_name = #{imageName}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from cutterwear
     where id = #{id,jdbcType=BIGINT}
   </delete>
+  <delete id="deleteByExample" parameterType="com.gm.pojo.CutterwearExample">
+    delete from cutterwear
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
   <insert id="insert" parameterType="com.gm.pojo.Cutterwear">
-    insert into cutterwear (id, date, type, 
-      position, manufacturer, image_name, 
-      wear, wear_type)
-    values (#{id,jdbcType=BIGINT}, #{date,jdbcType=BIGINT}, #{type,jdbcType=VARCHAR}, 
-      #{position,jdbcType=BIGINT}, #{manufacturer,jdbcType=VARCHAR}, #{imageName,jdbcType=VARCHAR}, 
-      #{wear,jdbcType=INTEGER}, #{wearType,jdbcType=INTEGER})
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into cutterwear (`date`, `type`, `position`,
+    manufacturer, image_name, wear,
+    wear_type)
+    values (#{date,jdbcType=BIGINT}, #{type,jdbcType=VARCHAR}, #{position,jdbcType=BIGINT},
+    #{manufacturer,jdbcType=VARCHAR}, #{imageName,jdbcType=VARCHAR}, #{wear,jdbcType=INTEGER},
+    #{wearType,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.gm.pojo.Cutterwear">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into cutterwear
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
       <if test="date != null">
-        date,
+        `date`,
       </if>
       <if test="type != null">
-        type,
+        `type`,
       </if>
       <if test="position != null">
-        position,
+        `position`,
       </if>
       <if test="manufacturer != null">
         manufacturer,
@@ -73,9 +142,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=BIGINT},
-      </if>
       <if test="date != null">
         #{date,jdbcType=BIGINT},
       </if>
@@ -99,17 +165,69 @@
       </if>
     </trim>
   </insert>
+  <select id="countByExample" parameterType="com.gm.pojo.CutterwearExample" resultType="java.lang.Long">
+    select count(*) from cutterwear
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update cutterwear
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.date != null">
+        `date` = #{record.date,jdbcType=BIGINT},
+      </if>
+      <if test="record.type != null">
+        `type` = #{record.type,jdbcType=VARCHAR},
+      </if>
+      <if test="record.position != null">
+        `position` = #{record.position,jdbcType=BIGINT},
+      </if>
+      <if test="record.manufacturer != null">
+        manufacturer = #{record.manufacturer,jdbcType=VARCHAR},
+      </if>
+      <if test="record.imageName != null">
+        image_name = #{record.imageName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.wear != null">
+        wear = #{record.wear,jdbcType=INTEGER},
+      </if>
+      <if test="record.wearType != null">
+        wear_type = #{record.wearType,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update cutterwear
+    set id = #{record.id,jdbcType=BIGINT},
+    `date` = #{record.date,jdbcType=BIGINT},
+    `type` = #{record.type,jdbcType=VARCHAR},
+    `position` = #{record.position,jdbcType=BIGINT},
+    manufacturer = #{record.manufacturer,jdbcType=VARCHAR},
+    image_name = #{record.imageName,jdbcType=VARCHAR},
+    wear = #{record.wear,jdbcType=INTEGER},
+    wear_type = #{record.wearType,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
   <update id="updateByPrimaryKeySelective" parameterType="com.gm.pojo.Cutterwear">
     update cutterwear
     <set>
       <if test="date != null">
-        date = #{date,jdbcType=BIGINT},
+        `date` = #{date,jdbcType=BIGINT},
       </if>
       <if test="type != null">
-        type = #{type,jdbcType=VARCHAR},
+        `type` = #{type,jdbcType=VARCHAR},
       </if>
       <if test="position != null">
-        position = #{position,jdbcType=BIGINT},
+        `position` = #{position,jdbcType=BIGINT},
       </if>
       <if test="manufacturer != null">
         manufacturer = #{manufacturer,jdbcType=VARCHAR},
@@ -128,13 +246,13 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.gm.pojo.Cutterwear">
     update cutterwear
-    set date = #{date,jdbcType=BIGINT},
-      type = #{type,jdbcType=VARCHAR},
-      position = #{position,jdbcType=BIGINT},
-      manufacturer = #{manufacturer,jdbcType=VARCHAR},
-      image_name = #{imageName,jdbcType=VARCHAR},
-      wear = #{wear,jdbcType=INTEGER},
-      wear_type = #{wearType,jdbcType=INTEGER}
+    set `date` = #{date,jdbcType=BIGINT},
+        `type` = #{type,jdbcType=VARCHAR},
+        `position` = #{position,jdbcType=BIGINT},
+        manufacturer = #{manufacturer,jdbcType=VARCHAR},
+        image_name = #{imageName,jdbcType=VARCHAR},
+        wear = #{wear,jdbcType=INTEGER},
+        wear_type = #{wearType,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

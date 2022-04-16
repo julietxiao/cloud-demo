@@ -8,11 +8,6 @@
     <artifactId>cloud-demo</artifactId>
     <version>1.0</version>
     <modules>
-        <module>user-service</module>
-        <module>order-service</module>
-        <module>eureka-server</module>
-        <module>cloud-gateway</module>
-        <module>service_software</module>
         <module>cutterware-service</module>
         <module>equipment_service</module>
     </modules>
@@ -65,10 +60,4 @@
 
         </dependencies>
     </dependencyManagement>
-    <dependencies>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-        </dependency>
-    </dependencies>
 </project>
